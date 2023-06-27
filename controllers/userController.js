@@ -1,7 +1,7 @@
 const User = require('../models/user');
-const Messages = require('../models/message');
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
+const passport = require("passport");
 
 // Display sign up form form on GET.
 exports.sign_up_get = (req, res) => {
@@ -9,69 +9,57 @@ exports.sign_up_get = (req, res) => {
   };
 
 // Handle sign up form on POST.
-exports.watch_create_post = [
-  // Convert the category to an array.
-  (req, res, next) => {
-    if (!(req.body.category instanceof Array)) {
-      if (typeof req.body.category === "undefined") req.body.category = [];
-      else req.body.category = new Array(req.body.category);
-    }
-    next();
-  },
-
+exports.sign_up_post = [
   // Validate and sanitize fields.
-  body("name", "Name must not be empty.")
+  body("first_name", "First name must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("brand", "Brand must not be empty.")
+  body("last_name", "Last name must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("year", "Year must not be empty.")
+  body("username", "E-mail must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("reference", "Reference must not be empty").trim().isLength({ min: 1 }).escape(),
-  body("price", "Price must not be empty").trim().isLength({ min: 1 }).escape(),
-  body("category.*").escape(),
-  // Process request after validation and sanitization.
+  body("password", "Password must not be empty").trim().isLength({ min: 1 }).escape(),
 
+  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a Watch object with escaped and trimmed data.
-    const watch = new Watch({
-      name: req.body.name,
-      brand: req.body.brand,
-      year: req.body.year,
-      reference: req.body.reference,
-      price: req.body.price,
-      category: req.body.category,
+    // Create a User object with escaped and trimmed data.
+    const user = new User({
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      username: req.body.username,
+      password: req.body.password,
     });
 
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/error messages.
-
-      // Get all brands and categories for form.
-      const [allBrands, allCategories] = await Promise.all([
-        Brand.find().exec(),
-        Category.find().exec(),
-      ]);
-
-      res.render("watch_form", {
-        title: "Create Watch",
-        brands: allBrands,
-        categories: allCategories,
-        watch: watch,
+      res.render("sign_up_form", {
+        title: "Sign up",
         errors: errors.array(),
       });
     } else {
-      // Data from form is valid. Save watch.
-      await watch.save();
-      res.redirect(watch.url);
+      // Data from form is valid. Save user.
+      await user.save();
+      res.redirect('/');
     }
   }),
 ];
 
+
+// Display log in form form on GET.
+exports.log_in_get = (req, res) => {
+  res.render("log-in-form");
+};
+
+// Handle log in from on POST
+exports.log_in_post = passport.authenticate("local", {
+  successRedirect: "/",
+  failureRedirect: "/"
+});
