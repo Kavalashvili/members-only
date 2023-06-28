@@ -3,5 +3,21 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src="https://kit.fontawesome.com/7775c06804.js"
+          crossorigin="anonymous")
   body
+    nav
+      div
+        a(href="/") Home
+      div
+        h1= title
+      div
+        ul(class='nav-list') 
+          li
+            a(href="/users/sign-up-form") Sign Up
+          li
+            a(href="/users/log-in-form") Log In
     block content
+    footer 
+      p Kavalashvili 
+        i(class= 'fab fa-github')

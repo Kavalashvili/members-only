@@ -30,6 +30,8 @@ async function main() {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+// Set default title for all pages
+app.locals.title = 'Members Only';
 
 passport.use(
   new LocalStrategy(async(username, password, done) => {
