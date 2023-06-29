@@ -2,6 +2,7 @@ const User = require('../models/user');
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 const passport = require("passport");
+const bcrypt = require('bcryptjs');
 
 // Display sign up form form on GET.
 exports.sign_up_get = (req, res) => {
@@ -30,24 +31,39 @@ exports.sign_up_post = [
     // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a User object with escaped and trimmed data.
-    const user = new User({
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      username: req.body.username,
-      password: req.body.password,
-    });
-
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/error messages.
-      res.render("sign_up_form", {
+      res.render("sign-up-form", {
         title: "Sign up",
         errors: errors.array(),
       });
     } else {
-      // Data from form is valid. Save user.
-      await user.save();
-      res.redirect('/');
+      // Data from form is valid. Hash the password and save the user.
+      bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+        if (err) {
+          // Handle the error
+          console.log(err);
+          return res.redirect("/error");
+        }
+
+        // Create a User object with escaped and trimmed data.
+        const user = new User({
+          first_name: req.body.first_name,
+          last_name: req.body.last_name,
+          username: req.body.username,
+          password: hashedPassword,
+        });
+
+        try {
+          // Save the user
+          await user.save();
+          res.redirect("/");
+        } catch (err) {
+          // Handle the error
+          console.log(err);
+          res.redirect("/error");
+        }
+      });
     }
   }),
 ];
@@ -63,3 +79,13 @@ exports.log_in_post = passport.authenticate("local", {
   successRedirect: "/",
   failureRedirect: "/"
 });
+
+// Handle log out
+exports.log_out_get = function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+};

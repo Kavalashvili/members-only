@@ -16,4 +16,7 @@ router.get('/log-in-form', user_controller.log_in_get);
 // POST request for log in form
 router.post('/log-in-form', user_controller.log_in_post);
 
+// GET request for log out
+router.get('/log-out', user_controller.log_out_get);
+
 module.exports = router;

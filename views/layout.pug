@@ -22,10 +22,14 @@ html
         h1= title
       div
         ul.nav-list
-          li
-            a(href="/users/sign-up-form") Sign Up
-          li
-            a(href="/users/log-in-form") Log In
+          if currentUser
+            li 
+              a(href='/users/log-out') Log Out
+          else
+            li
+              a(href="/users/sign-up-form") Sign Up
+            li
+              a(href="/users/log-in-form") Log In
     block content
     footer 
       p Kavalashvili 

@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 require('dotenv').config();
 const User = require('./models/user');
+const bcrypt = require('bcryptjs');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -30,9 +31,6 @@ async function main() {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// Set default title for all pages
-app.locals.title = 'Members Only';
-
 passport.use(
   new LocalStrategy(async(username, password, done) => {
     try {
@@ -40,10 +38,15 @@ passport.use(
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
       };
-      if (user.password !== password) {
-        return done(null, false, { message: "Incorrect password" });
-      };
-      return done(null, user);
+      bcrypt.compare(password, user.password, (err, res) => {
+        if (res) {
+          // passwords match! log user in
+          return done(null, user)
+        } else {
+          // passwords do not match!
+          return done(null, false, { message: "Incorrect password" })
+        }
+      })
     } catch(err) {
       return done(err);
     };
@@ -63,6 +66,9 @@ passport.deserializeUser(async function(id, done) {
   };
 });
 
+// Set default title for all pages
+app.locals.title = 'Members Only';
+
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -71,6 +77,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Set local variable for current user
+app.use(function(req, res, next) {
+  res.locals.currentUser = req.user;
+  console.log(req.user);
+  next();
+});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
