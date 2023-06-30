@@ -3,6 +3,8 @@ const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 const passport = require("passport");
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
+
 
 // Display sign up form form on GET.
 exports.sign_up_get = (req, res) => {
@@ -96,3 +98,33 @@ exports.log_out_get = function (req, res, next) {
     res.redirect("/");
   });
 };
+
+// Display membership form form on GET.
+exports.membership_get = (req, res) => {
+  const errors = [];
+  res.render("membership", { errors: errors });
+};
+
+// Handle membership form on POST
+exports.membership_post = async (req, res) => {
+  const passcode = process.env.MEMBERSHIP_PASSCODE;
+  const { membership } = req.body;
+  console.log(membership)
+
+  if (membership === passcode) {
+    // User's input matches the membership passcode
+    // Set isMember to true for the current user
+    res.locals.currentUser.isMember = true;
+    try {
+      await res.locals.currentUser.save();
+      res.redirect("/");
+    } catch (err) {
+      console.log(err);
+      res.redirect("/error");
+    }
+  } else {
+    // User's input does not match the membership passcode
+    const errors = [{ msg: "Invalid passcode" }];
+    res.render("membership", { errors: errors });
+  }
+}

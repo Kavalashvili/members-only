@@ -1,0 +1,15 @@
+extends layout 
+
+block content 
+    form(method='POST', action='/users/membership')
+        .form-group 
+            label(for='membership') Enter passcode to become a member: 
+            br
+            input#passcode.form-control(type='password', name='membership', placeholder='Passcode...', required='true')
+            br
+        button.btn.btn-primary.button-68(type='submit') Submit
+
+    if errors
+    ul
+        for error in errors
+            li!= error.msg

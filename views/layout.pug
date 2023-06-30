@@ -25,6 +25,9 @@ html
           if currentUser
             li 
               a(href='/users/log-out') Log Out
+            li 
+              if !currentUser.isMember
+                a(href='/users/membership') Membership
           else
             li
               a(href="/users/sign-up-form") Sign Up

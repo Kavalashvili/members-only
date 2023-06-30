@@ -19,4 +19,10 @@ router.post('/log-in-form', user_controller.log_in_post);
 // GET request for log out
 router.get('/log-out', user_controller.log_out_get);
 
+// GET request for membership
+router.get('/membership', user_controller.membership_get);
+
+// POST request for membership
+router.post('/membership', user_controller.membership_post);
+
 module.exports = router;
