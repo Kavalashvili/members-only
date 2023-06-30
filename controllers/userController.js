@@ -25,6 +25,13 @@ exports.sign_up_post = [
     .isLength({ min: 1 })
     .escape(),
   body("password", "Password must not be empty").trim().isLength({ min: 1 }).escape(),
+  body("confirm_password")
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passwords do not match");
+      }
+      return true;
+    }),
 
   // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
