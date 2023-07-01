@@ -1,0 +1,15 @@
+extends layout 
+
+block content 
+    form(method='POST', action='/messages/create-message')
+        .form-group 
+            label(for='title') Title: 
+            br
+            input#title.form-control(type='text', placeholder='Title...', name='title', required='true')
+        .form-group 
+            label(for='text') Message: 
+            br
+            textarea#text.form-control(rows='12', cols='30', name='text', required='true', placeholder='Text...')
+        button.btn.btn-primary.button-68(type='submit') Submit
+
+    

@@ -1,3 +1,7 @@
 extends layout
 
 block content
+    if currentUser 
+        div
+            button.button-68.new-message-button
+                a(href='/messages/create-message') Create Message

@@ -64,14 +64,14 @@ form {
   align-items: center;
 }
 
-input {
+input, textarea {
   margin-top: 10px;
   border-radius: 8px;
   border-style: none;
   width: 300px;
 }
 
-input[type=text], input[type=password] {
+input[type=text], input[type=password], textarea {
   padding: 10px;
 }
 
@@ -124,5 +124,9 @@ input[type=text], input[type=password] {
 
 .button-68:hover {
   box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
+}
+
+.new-message-button {
+  width: 200px;
 }
 
