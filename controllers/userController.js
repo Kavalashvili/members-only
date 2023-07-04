@@ -55,15 +55,15 @@ exports.sign_up_post = [
           return res.redirect("/error");
         }
 
-        // Create a User object with escaped and trimmed data.
-        const user = new User({
-          first_name: req.body.first_name,
-          last_name: req.body.last_name,
-          username: req.body.username,
-          password: hashedPassword,
-        });
-
         try {
+          // Create a User object with escaped and trimmed data.
+          const user = new User({
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            username: req.body.username,
+            password: hashedPassword,
+          });
+          
           // Save the user
           await user.save();
           res.redirect("/");
