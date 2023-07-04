@@ -1,7 +1,14 @@
 extends layout
 
 block content
+    each message in messages
+        .message 
+            h2=message.title 
+            p=message.text 
+            p Timestamp: #{message.timestamp}
+            p Author: #{message.author.first_name}
     if currentUser 
         div
             button.button-68.new-message-button
                 a(href='/messages/create-message') Create Message
+        
